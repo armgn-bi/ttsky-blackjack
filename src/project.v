@@ -9,13 +9,17 @@ module tt_um_blackjack (
     input  wire [7:0] ui_in,
     output wire [7:0] uo_out,
     input  wire [7:0] uio_in,
-    output wire [7:0] uio_out
+    output wire [7:0] uio_out,
+    output wire [7:0] uio_oe
 );
 
 // Map TinyTapout interface to blackjack module
 wire rst = ~rst_n;  // Convert active low to active high
 wire hit_btn = ui_in[2];
 wire stand_btn = ui_in[3];
+
+// uio_oe is always 0 (input mode) since we don't use bidirectional pins
+assign uio_oe = 8'b0;
 
 blackjack blackjack_inst (
     .clk(clk),
@@ -27,8 +31,7 @@ blackjack blackjack_inst (
     .win_led(uo_out[2]),
     .lose_led(uo_out[3]),
     .push_led(uo_out[4]),
-    .sum(uo_out[7:5]),
-    .state()  // Not used in wrapper
+    .sum(uo_out[7:5])
 );
 
 endmodule
@@ -44,8 +47,7 @@ module blackjack (
     output wire win_led,
     output wire lose_led,
     output wire push_led,
-    output wire [2:0] sum,
-    output wire [2:0] state  // For testing only
+    output wire [2:0] sum
 );
 
 // State definitions
