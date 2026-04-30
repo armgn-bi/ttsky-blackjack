@@ -1,7 +1,40 @@
 // Blackjack - TinyTapout 1x1
 // Faz 2-3: Temel Modül + Kart Mantığı
 
+// TinyTapout wrapper module
 module tt_um_blackjack (
+    input  wire clk,
+    input  wire ena,
+    input  wire rst_n,
+    input  wire [7:0] ui_in,
+    output wire [7:0] uo_out,
+    input  wire [7:0] uio_in,
+    output wire [7:0] uio_out
+);
+
+// Map TinyTapout interface to blackjack module
+wire rst = ~rst_n;  // Convert active low to active high
+wire hit_btn = ui_in[2];
+wire stand_btn = ui_in[3];
+
+blackjack blackjack_inst (
+    .clk(clk),
+    .rst(rst),
+    .hit_btn(hit_btn),
+    .stand_btn(stand_btn),
+    .show_player_led(uo_out[0]),
+    .show_dealer_led(uo_out[1]),
+    .win_led(uo_out[2]),
+    .lose_led(uo_out[3]),
+    .push_led(uo_out[4]),
+    .sum(uo_out[7:5]),
+    .state()  // Not used in wrapper
+);
+
+endmodule
+
+// Main blackjack module
+module blackjack (
     input  wire clk,
     input  wire rst,
     input  wire hit_btn,
