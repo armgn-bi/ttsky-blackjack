@@ -1,3 +1,4 @@
+![](../../workflows/gds/badge.svg) ![](../../workflows/docs/badge.svg) ![](../../workflows/test/badge.svg) ![](../../workflows/fpga/badge.svg)
 # 1x1 Blackjack - TinyTapout
 
 A Tiny Tapeout 1x1 project that implements a playable Blackjack game.
