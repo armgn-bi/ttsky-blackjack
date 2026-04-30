@@ -1,27 +1,99 @@
-![](../../workflows/gds/badge.svg) ![](../../workflows/docs/badge.svg) ![](../../workflows/test/badge.svg) ![](../../workflows/fpga/badge.svg)
+# 1x1 Blackjack - TinyTapout
 
-# Tiny Tapeout Verilog Project Template
+A Tiny Tapeout 1x1 project that implements a playable Blackjack game.
 
-- [Read the documentation for project](docs/info.md)
+## Features
+
+- **5-state state machine**: IDLE → DEAL → PLAYER_TURN → DEALER_TURN → GAME_OVER
+- **Random card generation**: 8-bit LFSR for card values (2-10, J/Q/K=10, A=1)
+- **Player controls**: Hit (draw card) and Stand (stop)
+- **Dealer AI**: Automatically draws until 17 or bust
+- **Multiplexed display**: Shows player and dealer sums alternately
+- **Result LEDs**: Win, lose, and push indicators
+
+## Quick Start
+
+### Simulation
+
+```bash
+# Compile and run testbench
+iverilog -o tb_blackjack.vvp tb_blackjack.v blackjack.v
+vvp tb_blackjack.vvp
+```
+
+### Synthesis
+
+```bash
+# Run Yosys synthesis
+yosys config.tcl
+```
+
+See [SENTEZ.md](SENTEZ.md) for detailed synthesis information.
+
+## Hardware Interface
+
+### Inputs (4/8 used)
+
+| Pin | Signal | Description |
+|-----|--------|-------------|
+| ui[0] | clk | Clock (100MHz) |
+| ui[1] | rst | Reset (active high) |
+| ui[2] | hit_btn | Player draws a card |
+| ui[3] | stand_btn | Player stops drawing |
+
+### Outputs (8/8 used)
+
+| Pin | Signal | Description |
+|-----|--------|-------------|
+| uo[0] | show_player_led | Showing player sum |
+| uo[1] | show_dealer_led | Showing dealer sum |
+| uo[2] | win_led | Player won |
+| uo[3] | lose_led | Player lost |
+| uo[4] | push_led | Tie game |
+| uo[5] | sum[0] | Sum bit 0 |
+| uo[6] | sum[1] | Sum bit 1 |
+| uo[7] | sum[2] | Sum bit 2 |
+
+## Game Rules
+
+1. **Initial deal**: Player and dealer each receive 2 cards
+2. **Player turn**: Hit (draw) or Stand (stop)
+3. **Dealer turn**: Dealer draws until 17 or bust
+4. **Ace logic**: Ace counts as 1 or 11 (whichever is better, without busting)
+5. **Win conditions**:
+   - Player has 21 (Blackjack)
+   - Dealer busts (over 21)
+   - Player sum > dealer sum (both under 21)
+6. **Lose conditions**:
+   - Player busts (over 21)
+   - Dealer has 21 (Blackjack)
+   - Dealer sum > player sum (both under 21)
+7. **Push**: Both have same sum (both under 21)
+
+## Resource Usage
+
+- **Logic cells**: ~55-64 (1x1 tile limit: ~64)
+- **State bits**: 30
+- **Clock frequency**: 100MHz
+- **Note**: Ace 1/11 logic adds ~2 logic cells
+
+## Project Structure
+
+```
+.
+├── blackjack.v          # Main module
+├── tb_blackjack.v       # Testbench
+├── config.tcl           # Yosys synthesis config
+├── PROJE_PLANI.md       # Project plan (Turkish)
+├── SENTEZ.md            # Synthesis report (Turkish)
+└── README.md            # This file
+```
 
 ## What is Tiny Tapeout?
 
 Tiny Tapeout is an educational project that aims to make it easier and cheaper than ever to get your digital and analog designs manufactured on a real chip.
 
 To learn more and get started, visit https://tinytapeout.com.
-
-## Set up your Verilog project
-
-1. Add your Verilog files to the `src` folder.
-2. Edit the [info.yaml](info.yaml) and update information about your project, paying special attention to the `source_files` and `top_module` properties. If you are upgrading an existing Tiny Tapeout project, check out our [online info.yaml migration tool](https://tinytapeout.github.io/tt-yaml-upgrade-tool/).
-3. Edit [docs/info.md](docs/info.md) and add a description of your project.
-4. Adapt the testbench to your design. See [test/README.md](test/README.md) for more information.
-
-The GitHub action will automatically build the ASIC files using [LibreLane](https://www.zerotoasiccourse.com/terminology/librelane/).
-
-## Enable GitHub actions to build the results page
-
-- [Enabling GitHub Pages](https://tinytapeout.com/faq/#my-github-action-is-failing-on-the-pages-part)
 
 ## Resources
 
@@ -30,13 +102,3 @@ The GitHub action will automatically build the ASIC files using [LibreLane](http
 - [Learn how semiconductors work](https://tinytapeout.com/siliwiz/)
 - [Join the community](https://tinytapeout.com/discord)
 - [Build your design locally](https://www.tinytapeout.com/guides/local-hardening/)
-
-## What next?
-
-- [Submit your design to the next shuttle](https://app.tinytapeout.com/).
-- Edit [this README](README.md) and explain your design, how it works, and how to test it.
-- Share your project on your social network of choice:
-  - LinkedIn [#tinytapeout](https://www.linkedin.com/search/results/content/?keywords=%23tinytapeout) [@TinyTapeout](https://www.linkedin.com/company/100708654/)
-  - Mastodon [#tinytapeout](https://chaos.social/tags/tinytapeout) [@matthewvenn](https://chaos.social/@matthewvenn)
-  - X (formerly Twitter) [#tinytapeout](https://twitter.com/hashtag/tinytapeout) [@tinytapeout](https://twitter.com/tinytapeout)
-  - Bluesky [@tinytapeout.com](https://bsky.app/profile/tinytapeout.com)
