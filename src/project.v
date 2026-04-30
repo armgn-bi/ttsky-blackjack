@@ -1,7 +1,7 @@
 // Blackjack - TinyTapout 1x1
 // Faz 2-3: Temel Modül + Kart Mantığı
 
-module blackjack (
+module tt_um_blackjack (
     input  wire clk,
     input  wire rst,
     input  wire hit_btn,
