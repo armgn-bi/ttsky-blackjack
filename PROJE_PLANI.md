@@ -293,3 +293,4 @@ vvp tb_blackjack.vvp
 - TinyTapout 1x1: ~64 logic cells
 - Tasarımımız: ~55-65 logic cells
 - **Sonuç**: ⚠ Sınırın üzerinde olabilir, optimize edilmeli
+
